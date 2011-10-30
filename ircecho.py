@@ -40,17 +40,17 @@ s.send(bytes("JOIN #CHANGETHIS\r\n", "UTF-8"));
 s.send(bytes("PRIVMSG %s :Hello Master\r\n" % MASTER, "UTF-8"))
 
 while 1:
-    readbuffer=readbuffer+s.recv(1024).decode("UTF-8")
-    temp=str.split(readbuffer, "\n")
+    readbuffer = readbuffer+s.recv(1024).decode("UTF-8")
+    temp = str.split(readbuffer, "\n")
     readbuffer=temp.pop( )
 
     for line in temp:
-        line=str.rstrip(line)
-        line=str.split(line)
+        line = str.rstrip(line)
+        line = str.split(line)
 
-        if(line[0]=="PING"):
+        if(line[0] == "PING"):
             s.send(bytes("PONG %s\r\n" % line[1], "UTF-8"))
-        if(line[1]=="PRIVMSG"):
+        if(line[1] == "PRIVMSG"):
             sender = ""
             for char in line[0]:
                 if(char == "!"):
