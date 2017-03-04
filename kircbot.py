@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# kircbot.py
+# Copyright (C) 2017 : kikadf <kikadf.01@gmail.com>
+# Based on ircecho.py
+#
 # ircecho.py
 # Copyright (C) 2011 : Robert L Szkutak II - http://robertszkutak.com
 #
