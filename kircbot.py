@@ -7,6 +7,8 @@
 # ircecho.py
 # Copyright (C) 2011 : Robert L Szkutak II - http://robertszkutak.com
 #
+# More copyright references: https://gist.github.com/GarrettSocling/371917661f98c6c54beea49de94ce1d9
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
