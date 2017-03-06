@@ -24,29 +24,18 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import sys
-import socket
 import string
 
-HOST = "CHANGETHIS"
-PORT = 6667
-
-NICK = "CHANGETHIS"
-IDENT = "CHANGETHIS"
-REALNAME = "CHANGETHIS"
-MASTER = "CHANGETHIS"
+import connecting as c
 
 readbuffer = ""
 
-s=socket.socket( )
-s.connect((HOST, PORT))
+c.conn2server()
 
-s.send(bytes("NICK %s\r\n" % NICK, "UTF-8"))
-s.send(bytes("USER %s %s bla :%s\r\n" % (IDENT, HOST, REALNAME), "UTF-8"))
-s.send(bytes("JOIN #CHANGETHIS\r\n", "UTF-8"));
-s.send(bytes("PRIVMSG %s :Hello Master\r\n" % MASTER, "UTF-8"))
+c.join2chan()
 
 while 1:
-    readbuffer = readbuffer+s.recv(1024).decode("UTF-8")
+    readbuffer = readbuffer+c.s.recv(1024).decode("UTF-8")
     temp = str.split(readbuffer, "\n")
     readbuffer=temp.pop( )
 
@@ -55,7 +44,7 @@ while 1:
         line = str.split(line)
 
         if(line[0] == "PING"):
-            s.send(bytes("PONG %s\r\n" % line[1], "UTF-8"))
+            c.s.send(bytes("PONG %s\r\n" % line[1], "UTF-8"))
         if(line[1] == "PRIVMSG"):
             sender = ""
             for char in line[0]:
@@ -70,6 +59,6 @@ while 1:
                 message += line[i] + " "
                 i = i + 1
             message.lstrip(":")
-            s.send(bytes("PRIVMSG %s %s \r\n" % (sender, message), "UTF-8"))
+            c.s.send(bytes("PRIVMSG %s %s \r\n" % (sender, message), "UTF-8"))
         for index, i in enumerate(line):
             print(line[index])
