@@ -17,26 +17,19 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
 
+import sys
 import socket
 
-HOST = "CHANGETHIS"
-PORT = 6667
-CHANNEL = "CHANGETHIS"
+import config as conf
 
-NICK = "CHANGETHIS"
-IDENT = "CHANGETHIS"
-REALNAME = "CHANGETHIS"
-MASTER = "CHANGETHIS"
-
-s = socket.socket( )
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def conn2server():
-  s.connect((HOST, PORT))
-
-  s.send(bytes("NICK %s\r\n" % NICK, "UTF-8"))
-  s.send(bytes("USER %s %s bla :%s\r\n" % (IDENT, HOST, REALNAME), "UTF-8"))
+  s.connect((conf.HOST, conf.PORT))
+  s.send(bytes("NICK %s\r\n" % conf.NICK, "UTF-8"))
+  s.send(bytes("USER %s %s bla :%s\r\n" % (conf.IDENT, conf.HOST, conf.REALNAME), "UTF-8"))
 
 def join2chan():
-  s.send(bytes("JOIN %s\r\n" % CHANNEL, "UTF-8"));
-  s.send(bytes("PRIVMSG %s :Hello!\r\n" % MASTER, "UTF-8"))
+  s.send(bytes("JOIN %s\r\n" % conf.CHANNEL, "UTF-8"));
+  s.send(bytes("PRIVMSG %s :Hello!\r\n" % conf.MASTER, "UTF-8"))
 
