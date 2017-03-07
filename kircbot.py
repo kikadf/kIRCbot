@@ -25,17 +25,28 @@
 
 import sys
 import string
+import os
 
-import connecting as c
+import config as conf
+import connecting as conn
 
 readbuffer = ""
 
-c.conn2server()
 
-c.join2chan()
+if not os.path.isfile('% s' % conf.config_file):
+  print(conf.needcopy)
+  conf.copyconf()
+else:
+  print(conf.usedconf)
+  conf.readconnconf()
+  conf.checkconf()
+
+conn.conn2server()
+
+conn.join2chan()
 
 while 1:
-    readbuffer = readbuffer+c.s.recv(1024).decode("UTF-8")
+    readbuffer = readbuffer+conn.s.recv(1024).decode("UTF-8")
     temp = str.split(readbuffer, "\n")
     readbuffer=temp.pop( )
 
@@ -44,7 +55,7 @@ while 1:
         line = str.split(line)
 
         if(line[0] == "PING"):
-            c.s.send(bytes("PONG %s\r\n" % line[1], "UTF-8"))
+            conn.s.send(bytes("PONG %s\r\n" % line[1], "UTF-8"))
         if(line[1] == "PRIVMSG"):
             sender = ""
             for char in line[0]:
@@ -59,6 +70,6 @@ while 1:
                 message += line[i] + " "
                 i = i + 1
             message.lstrip(":")
-            c.s.send(bytes("PRIVMSG %s %s \r\n" % (sender, message), "UTF-8"))
+            conn.s.send(bytes("PRIVMSG %s %s \r\n" % (sender, message), "UTF-8"))
         for index, i in enumerate(line):
             print(line[index])
