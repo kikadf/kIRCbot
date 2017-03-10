@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# kircbot.py
+# kircbot.py, part of kIRCbot
 # Copyright (C) 2017 : kikadf <kikadf.01@gmail.com>
 # Based on ircecho.py
 #
@@ -23,27 +23,16 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import sys
-import string
-import os
-
 import config as conf
 import connecting as conn
 
 readbuffer = ""
 
+conf.checkconf(conf.config_path, conf.config_file)
 
-if not os.path.isfile('% s' % conf.config_file):
-  print(conf.needcopy)
-  conf.copyconf()
-else:
-  print(conf.usedconf)
-  conf.readconnconf()
-  conf.checkconf()
+conn.conn2server(conf.HOST, conf.PORT, conf.NICK, conf.IDENT, conf.REALNAME)
 
-conn.conn2server()
-
-conn.join2chan()
+conn.join2chan(conf.CHANNEL, conf.MASTER)
 
 while 1:
     readbuffer = readbuffer+conn.s.recv(1024).decode("UTF-8")

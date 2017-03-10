@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# config.py
+# config.py, part of kIRCbot
 # Copyright (C) 2017 : kikadf <kikadf.01@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -22,37 +22,34 @@ import os
 import shutil
 import configparser
 
-parser = configparser.ConfigParser()
-
 home = os.path.expanduser("~")
 config_path = '%s/.config/kircbot' % home
 config_file = '%s/config.ini' % config_path
+HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = ""
 
-needcopy = "Not found config file, copy the default."
-neededit = "Must to edit %s" % config_file
-usedconf = "Used config: %s" % config_file
+def readconnconf(config):
+    parser = configparser.ConfigParser()
+    print("Used config: %s" % config)
+    parser.read(config)
 
-HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = 0
+    global HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER
 
-def readconnconf():
-  parser.read(config_file)
+    HOST = parser.get('Server and channel options', 'Host')
+    PORT = parser.getint('Server and channel options', 'Port')
+    CHANNEL = parser.get('Server and channel options', 'Channel')
+    NICK = parser.get('ID options', 'Nick')
+    IDENT = parser.get('ID options', 'Ident')
+    REALNAME = parser.get('ID options', 'Realname')
+    MASTER = parser.get('ID options', 'Master')
 
-  global HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER
+def checkconf(path, config):
+    if not os.path.isfile(config):
+        print("Not found config file, copy the default.")
+        os.makedirs(path, exist_ok=True)
+        shutil.copyfile('default.ini', config)
 
-  HOST = parser.get('Server and channel options', 'Host')
-  PORT = parser.getint('Server and channel options', 'Port')
-  CHANNEL = parser.get('Server and channel options', 'Channel')
-  NICK = parser.get('ID options', 'Nick')
-  IDENT = parser.get('ID options', 'Ident')
-  REALNAME = parser.get('ID options', 'Realname')
-  MASTER = parser.get('ID options', 'Master')
+    readconnconf(config)
 
-def checkconf():
-  for i in HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER:
-    if i == '"CHANGETHIS"':
-      sys.exit(neededit)
-
-def copyconf():
-  os.makedirs(config_path, exist_ok=True)
-  shutil.copyfile('default.ini', '% s' % config_file)
-
+    for i in HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER:
+        if i == '"CHANGETHIS"':
+            sys.exit("Must to edit %s" % config)

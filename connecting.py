@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# connecting.py
+# connecting.py, part of kIRCbot
 # Copyright (C) 2017 : kikadf <kikadf.01@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -17,19 +17,16 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
 
-import sys
 import socket
-
-import config as conf
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-def conn2server():
-  s.connect((conf.HOST, conf.PORT))
-  s.send(bytes("NICK %s\r\n" % conf.NICK, "UTF-8"))
-  s.send(bytes("USER %s %s bla :%s\r\n" % (conf.IDENT, conf.HOST, conf.REALNAME), "UTF-8"))
+def conn2server(host, port, nick, ident, realname):
+    s.connect((host, port))
+    s.send(bytes("NICK %s\r\n" % nick, "UTF-8"))
+    s.send(bytes("USER %s %s bla :%s\r\n" % (ident, host, realname), "UTF-8"))
 
-def join2chan():
-  s.send(bytes("JOIN %s\r\n" % conf.CHANNEL, "UTF-8"));
-  s.send(bytes("PRIVMSG %s :Hello!\r\n" % conf.MASTER, "UTF-8"))
+def join2chan(channel, master):
+    s.send(bytes("JOIN %s\r\n" % channel, "UTF-8"));
+    s.send(bytes("PRIVMSG %s :Hello!\r\n" % master, "UTF-8"))
 
