@@ -21,10 +21,12 @@ import socket
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-def conn2server(host, port, nick, ident, realname):
+def conn2server(host, port, nick, ident, realname, password):
     s.connect((host, port))
     s.send(bytes("NICK %s\r\n" % nick, "UTF-8"))
     s.send(bytes("USER %s %s bla :%s\r\n" % (ident, host, realname), "UTF-8"))
+    if password != 0:
+        s.send(bytes("PRIVMSG NICKSERV :identify %s\r\n" % password, "UTF-8"))
 
 def join2chan(channel, master):
     s.send(bytes("JOIN %s\r\n" % channel, "UTF-8"));

@@ -30,7 +30,9 @@ readbuffer = ""
 
 conf.checkconf(conf.config_path, conf.config_file)
 
-conn.conn2server(conf.HOST, conf.PORT, conf.NICK, conf.IDENT, conf.REALNAME)
+conf.k_password("kIRCbot", conf.IDENT)
+
+conn.conn2server(conf.HOST, conf.PORT, conf.NICK, conf.IDENT, conf.REALNAME, conf.PASSWORD)
 
 conn.join2chan(conf.CHANNEL, conf.MASTER)
 

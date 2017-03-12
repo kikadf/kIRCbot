@@ -21,18 +21,22 @@ import sys
 import os
 import shutil
 import configparser
+import keyring
+import getpass
 
 home = os.path.expanduser("~")
 config_path = '%s/.config/kircbot' % home
 config_file = '%s/config.ini' % config_path
+parser = configparser.ConfigParser()
 HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = ""
+REGISTERED = PASSWORD = 0
 
 def readconnconf(config):
-    parser = configparser.ConfigParser()
     print("Used config: %s" % config)
     parser.read(config)
 
     global HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER
+    global REGISTERED
 
     HOST = parser.get('Server and channel options', 'Host')
     PORT = parser.getint('Server and channel options', 'Port')
@@ -41,6 +45,10 @@ def readconnconf(config):
     IDENT = parser.get('ID options', 'Ident')
     REALNAME = parser.get('ID options', 'Realname')
     MASTER = parser.get('ID options', 'Master')
+    try:
+        REGISTERED = parser.getint('ID options', 'Registered')
+    except configparser.NoOptionError:
+        print('Use %s without identify.' % IDENT)
 
 def checkconf(path, config):
     if not os.path.isfile(config):
@@ -53,3 +61,34 @@ def checkconf(path, config):
     for i in HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER:
         if i == '"CHANGETHIS"':
             sys.exit("Must to edit %s" % config)
+
+def k_setpassword(service, username):
+    global PASSWORD
+
+    PASSWORD = getpass.getpass(prompt='Password: ', stream=None)
+    print('Set password for %s.' % IDENT)
+    keyring.set_password(service, username, PASSWORD)
+
+def k_password(service, username):
+    global PASSWORD
+
+    if REGISTERED == 1:
+        PASSWORD = keyring.get_password(service, username)
+
+        if PASSWORD == None:
+            k_setpassword(service, username)
+
+    elif REGISTERED == 2:
+        k_setpassword(service, username)
+        print("Edit config: %s" % config_file)
+        shutil.copyfile(config_file, config_file + '.old')
+        parser.read(config_file)
+        parser.set('ID options', 'Registered', '1')
+        fileout = open(config_file, 'w')
+        parser.write(fileout)
+        fileout.close()
+
+    else:
+        PASSWORD = 0
+
+
