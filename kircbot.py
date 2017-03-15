@@ -27,20 +27,26 @@ import config as conf
 import connecting as conn
 import commonevents as ce
 
+
 readbuffer = ""
 
-conf.checkconf(conf.config_path, conf.config_file)
+def connecting():
+    conf.checkconf(conf.config_path, conf.config_file)
+    conf.k_password("kIRCbot", conf.IDENT)
+    conn.conn2server(conf.HOST, conf.PORT, conf.NICK, conf.IDENT, conf.REALNAME, conf.PASSWORD)
+    conn.join2chan(conf.CHANNEL, conf.MASTER)
 
-conf.k_password("kIRCbot", conf.IDENT)
-
-conn.conn2server(conf.HOST, conf.PORT, conf.NICK, conf.IDENT, conf.REALNAME, conf.PASSWORD)
-
-conn.join2chan(conf.CHANNEL, conf.MASTER)
+connecting()
 
 while 1:
     readbuffer = readbuffer+conn.s.recv(1024).decode("UTF-8")
     temp = str.split(readbuffer, "\n")
-    readbuffer=temp.pop( )
+    readbuffer = temp.pop( )
+
+    if conn.checkconnected(ce.lasttime) > 300:
+        print('Reconnect...')
+        conn.s.close()
+        connecting()
 
     for line in temp:
         line = str.rstrip(line)

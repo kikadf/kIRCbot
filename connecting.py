@@ -18,6 +18,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
 
 import socket
+import time
+
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -31,4 +33,11 @@ def conn2server(host, port, nick, ident, realname, password):
 def join2chan(channel, master):
     s.send(bytes("JOIN %s\r\n" % channel, "UTF-8"));
     s.send(bytes("PRIVMSG %s :Hello!\r\n" % master, "UTF-8"))
+
+def checkconnected(lasttime):
+    currenttime = time.time()
+    difftime = currenttime - lasttime
+    return difftime
+
+
 
