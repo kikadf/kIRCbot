@@ -25,6 +25,7 @@
 
 import config as conf
 import connecting as conn
+import commonevents as ce
 
 readbuffer = ""
 
@@ -46,14 +47,11 @@ while 1:
         line = str.split(line)
 
         if(line[0] == "PING"):
-            conn.s.send(bytes("PONG %s\r\n" % line[1], "UTF-8"))
+            ce._pong(line[1])
+
         if(line[1] == "PRIVMSG"):
-            sender = ""
-            for char in line[0]:
-                if(char == "!"):
-                    break
-                if(char != ":"):
-                    sender += char 
+            ce.defsender(line[0])
+
             size = len(line)
             i = 3
             message = ""
@@ -61,6 +59,7 @@ while 1:
                 message += line[i] + " "
                 i = i + 1
             message.lstrip(":")
-            conn.s.send(bytes("PRIVMSG %s %s \r\n" % (sender, message), "UTF-8"))
+            conn.s.send(bytes("PRIVMSG %s %s \r\n" % (ce.sender, message), "UTF-8"))
+
         for index, i in enumerate(line):
             print(line[index])
