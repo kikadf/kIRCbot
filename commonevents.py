@@ -44,3 +44,14 @@ def defsender(line):
 
     lasttime = time.time()
 
+
+def message(channel, message):
+    conn.s.send(bytes("PRIVMSG %s :%s \r\n" % (channel, message), "UTF-8"))
+
+
+def quit(channel):
+    message(channel, "Bye!")
+    conn.s.close()
+    raise SystemExit
+
+
