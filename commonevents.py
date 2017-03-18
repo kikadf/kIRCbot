@@ -25,16 +25,22 @@ import connecting as conn
 lasttime = time.time()
 sender = ""
 
-def _pong(line):
+
+def pong(line):
     conn.s.send(bytes("PONG %s\r\n" % line, "UTF-8"))
     global lasttime
     lasttime = time.time()
 
+
 def defsender(line):
-    global sender
+    global sender, lasttime
     sender = ""
+
     for char in line:
         if(char == "!"):
             break
         if(char != ":"):
-            sender += char 
+            sender += char
+
+    lasttime = time.time()
+

@@ -30,6 +30,7 @@ import commonevents as ce
 
 readbuffer = ""
 
+
 def connecting():
     conf.checkconf(conf.config_path, conf.config_file)
     conf.k_password("kIRCbot", conf.IDENT)
@@ -39,7 +40,7 @@ def connecting():
 connecting()
 
 while 1:
-    readbuffer = readbuffer+conn.s.recv(1024).decode("UTF-8")
+    readbuffer = readbuffer + conn.s.recv(1024).decode("UTF-8")
     temp = str.split(readbuffer, "\n")
     readbuffer = temp.pop( )
 
@@ -53,7 +54,7 @@ while 1:
         line = str.split(line)
 
         if(line[0] == "PING"):
-            ce._pong(line[1])
+            ce.pong(line[1])
 
         if(line[1] == "PRIVMSG"):
             ce.defsender(line[0])

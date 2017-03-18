@@ -31,6 +31,7 @@ parser = configparser.ConfigParser()
 HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = ""
 REGISTERED = PASSWORD = 0
 
+
 def readconnconf(config):
     print("Used config: %s" % config)
     parser.read(config)
@@ -50,6 +51,7 @@ def readconnconf(config):
     except configparser.NoOptionError:
         print('Use %s without identify.' % IDENT)
 
+
 def checkconf(path, config):
     if not os.path.isfile(config):
         print("Not found config file, copy the default.")
@@ -62,12 +64,14 @@ def checkconf(path, config):
         if i == '"CHANGETHIS"':
             sys.exit("Must to edit %s" % config)
 
+
 def k_setpassword(service, username):
     global PASSWORD
 
     PASSWORD = getpass.getpass(prompt='Password: ', stream=None)
     print('Set password for %s.' % IDENT)
     keyring.set_password(service, username, PASSWORD)
+
 
 def k_password(service, username):
     global PASSWORD
