@@ -44,7 +44,7 @@ while 1:
     temp = str.split(readbuffer, "\n")
     readbuffer = temp.pop( )
 
-    if conn.checkconnected(ce.lasttime) > 300:
+    if ce.checkconnected(ce.lasttime) > 300:
         print('Reconnect...')
         ce.s.close()
         connecting()
