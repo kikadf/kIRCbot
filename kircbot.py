@@ -67,6 +67,8 @@ while 1:
 #                i = i + 1
 #            message.lstrip(":")
 #            ce.message(ce.sender, message)
+            if(line[3].lstrip(":") == conf.NICK):
+                ce.message(conf.CHANNEL, "WTF")
 
         for index, i in enumerate(line):
             print(line[index])
