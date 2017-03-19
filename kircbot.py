@@ -57,16 +57,16 @@ while 1:
             ce.pong(line[1])
 
         if(line[1] == "PRIVMSG"):
-            ce.defsender(line[0])
+#            ce.defsender(line[0])
 
-            size = len(line)
-            i = 3
-            message = ""
-            while(i < size): 
-                message += line[i] + " "
-                i = i + 1
-            message.lstrip(":")
-            ce.message(ce.sender, message)
+#            size = len(line)
+#            i = 3
+#            message = ""
+#            while(i < size): 
+#                message += line[i] + " "
+#                i = i + 1
+#            message.lstrip(":")
+#            ce.message(ce.sender, message)
 
         for index, i in enumerate(line):
             print(line[index])
