@@ -24,7 +24,6 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import config as conf
-import connecting as conn
 import commonevents as ce
 
 
@@ -34,19 +33,20 @@ readbuffer = ""
 def connecting():
     conf.checkconf(conf.config_path, conf.config_file)
     conf.k_password("kIRCbot", conf.IDENT)
-    conn.conn2server(conf.HOST, conf.PORT, conf.NICK, conf.IDENT, conf.REALNAME, conf.PASSWORD)
-    conn.join2chan(conf.CHANNEL, conf.MASTER)
+    ce.conn2server(conf.HOST, conf.PORT, conf.NICK, conf.IDENT, conf.REALNAME, conf.PASSWORD)
+    ce.join2chan(conf.CHANNEL, conf.MASTER)
+
 
 connecting()
 
 while 1:
-    readbuffer = readbuffer + conn.s.recv(1024).decode("UTF-8")
+    readbuffer = readbuffer + ce.s.recv(1024).decode("UTF-8")
     temp = str.split(readbuffer, "\n")
     readbuffer = temp.pop( )
 
     if conn.checkconnected(ce.lasttime) > 300:
         print('Reconnect...')
-        conn.s.close()
+        ce.s.close()
         connecting()
 
     for line in temp:
@@ -66,7 +66,7 @@ while 1:
                 message += line[i] + " "
                 i = i + 1
             message.lstrip(":")
-            conn.s.send(bytes("PRIVMSG %s %s \r\n" % (ce.sender, message), "UTF-8"))
+            ce.message(ce.sender, message)
 
         for index, i in enumerate(line):
             print(line[index])

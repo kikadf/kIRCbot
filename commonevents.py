@@ -18,16 +18,35 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. 
 
 import time
-
-import connecting as conn
+import socket
 
 
 lasttime = time.time()
 sender = ""
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+
+def conn2server(host, port, nick, ident, realname, password):
+    s.connect((host, port))
+    s.send(bytes("NICK %s\r\n" % nick, "UTF-8"))
+    s.send(bytes("USER %s %s bla :%s\r\n" % (ident, host, realname), "UTF-8"))
+    if password != 0:
+        s.send(bytes("PRIVMSG NICKSERV :identify %s\r\n" % password, "UTF-8"))
+
+
+def join2chan(channel, master):
+    s.send(bytes("JOIN %s\r\n" % channel, "UTF-8"))
+    s.send(bytes("PRIVMSG %s :Hello!\r\n" % master, "UTF-8"))
+
+
+def checkconnected(lasttime):
+    currenttime = time.time()
+    difftime = currenttime - lasttime
+    return difftime
 
 
 def pong(line):
-    conn.s.send(bytes("PONG %s\r\n" % line, "UTF-8"))
+    s.send(bytes("PONG %s\r\n" % line, "UTF-8"))
     global lasttime
     lasttime = time.time()
 
@@ -46,12 +65,12 @@ def defsender(line):
 
 
 def message(channel, message):
-    conn.s.send(bytes("PRIVMSG %s :%s \r\n" % (channel, message), "UTF-8"))
+    s.send(bytes("PRIVMSG %s :%s \r\n" % (channel, message), "UTF-8"))
 
 
 def quit(channel):
     message(channel, "Bye!")
-    conn.s.close()
+    s.close()
     raise SystemExit
 
 
