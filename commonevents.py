@@ -36,7 +36,7 @@ def conn2server(host, port, nick, ident, realname, password):
 
 def join2chan(channel, master):
     s.send(bytes("JOIN %s\r\n" % channel, "UTF-8"))
-    s.send(bytes("PRIVMSG %s :Hello!\r\n" % master, "UTF-8"))
+    s.send(bytes("PRIVMSG %s :Hello%s!\r\n" % (channel, " " + master), "UTF-8"))
 
 
 def checkconnected(lasttime):
@@ -73,4 +73,12 @@ def quit(channel):
     s.close()
     raise SystemExit
 
+
+def checkarg(list, index):
+    try:
+        t = list[index]
+    except IndexError:
+        return '3'   
+    else:
+        return '%s' % index
 
