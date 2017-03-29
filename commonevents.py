@@ -78,7 +78,24 @@ def checkarg(list, index):
     try:
         t = list[index]
     except IndexError:
-        return '3'   
+        return 3
     else:
         return '%s' % index
 
+
+def test1(channel):
+    message(channel, "TEST")
+
+
+def test2(channel):
+    message(channel, "YOO")
+
+
+def eventhandler(word, channel):
+    event = events['%s' % word]
+    event(channel)
+
+events = {
+            'test1' : test1,
+            'test2' : test2
+         }

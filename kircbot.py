@@ -68,10 +68,11 @@ while 1:
 #            message.lstrip(":")
 #            ce.message(ce.sender, message)
             if(line[3].strip(":") == conf.NICK):
-                if(line[int(ce.checkarg(line, 4))] == "help"):
-                    ce.message(conf.CHANNEL, dir(ce))
+                calledevent = line[int(ce.checkarg(line, 4))]
+                if( calledevent in ce.events):
+                    ce.eventhandler(calledevent, conf.CHANNEL)
                 else:
-                    ce.message(conf.CHANNEL, "WTF")
+                    ce.message(conf.CHANNEL, "WTF?")
 
         for index, i in enumerate(line):
             print(line[index])
