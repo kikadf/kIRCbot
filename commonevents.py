@@ -52,7 +52,7 @@ def readconnconf(config):
     NICK = parser['ID options']['Nick']
     IDENT = parser['ID options']['Ident']
     REALNAME = parser['ID options']['Realname']
-    MASTER = parser['ID options']['Master']
+    MASTER = parser['ID options']['Master'].split(',')
     try:
         REGISTERED = int(parser['ID options']['Registered'])
     except configparser.NoOptionError:
@@ -118,10 +118,10 @@ def conn2server(host = HOST, port = PORT, ident = IDENT, realname = REALNAME, pa
         s.send(bytes("PRIVMSG NICKSERV :identify %s\r\n" % password, "UTF-8"))
 
 
-def join2chan(channel = CHANNEL, master = MASTER, nick = NICK):
+def join2chan(channel = CHANNEL, nick = NICK):
     s.send(bytes("NICK %s\r\n" % nick, "UTF-8"))
     s.send(bytes("JOIN %s\r\n" % channel, "UTF-8"))
-    s.send(bytes("PRIVMSG %s :Hello%s!\r\n" % (channel, " " + master), "UTF-8"))
+    s.send(bytes("PRIVMSG %s :Hello!\r\n" % channel, "UTF-8"))
 
 
 def conns():
