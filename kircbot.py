@@ -49,16 +49,6 @@ while 1:
 
         if(line[1] == "PRIVMSG"):
             ce.activation()
-#            ce.defsender(line[0])
-
-#            size = len(line)
-#            i = 3
-#            message = ""
-#            while(i < size): 
-#                message += line[i] + " "
-#                i = i + 1
-#            message.lstrip(":")
-#            ce.message(ce.sender, message)
             if(line[3].strip(":") == ce.NICK):
                 calledevent = line[int(ce.checkarg(line, 4))]
                 if( calledevent in ce.events):
