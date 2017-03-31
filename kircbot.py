@@ -35,7 +35,7 @@ while 1:
     temp = str.split(readbuffer, "\n")
     readbuffer = temp.pop( )
 
-    if ce.checkconnected() > 500:
+    if ce.checkconnected(ce.lasttime) > 500:
         ce.restart()
 
     for line in temp:

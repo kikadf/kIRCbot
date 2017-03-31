@@ -129,7 +129,7 @@ def conns():
     join2chan()
 
 
-def checkconnected(lsttime = lasttime):
+def checkconnected(lsttime):
     currenttime = time.time()
     difftime = currenttime - lsttime
     return difftime
