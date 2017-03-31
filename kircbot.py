@@ -41,6 +41,7 @@ while 1:
         ce.restart("brb")
 
     for line in temp:
+        print(line)
         line = str.rstrip(line)
         line = str.split(line)
 
@@ -58,5 +59,3 @@ while 1:
                 else:
                     ce.message("WTF?")
 
-        for index, i in enumerate(line):
-            print(line[index])
