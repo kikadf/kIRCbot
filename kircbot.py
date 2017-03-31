@@ -28,17 +28,15 @@ import commonevents as ce
 
 readbuffer = ""
 
-
 ce.conns()
-
 
 while 1:
     readbuffer = readbuffer + ce.s.recv(1024).decode("UTF-8")
     temp = str.split(readbuffer, "\n")
     readbuffer = temp.pop( )
 
-    if ce.checkconnected() > 300:
-        ce.restart("brb")
+    if ce.checkconnected() > 500:
+        ce.restart()
 
     for line in temp:
         print(line)
@@ -54,8 +52,6 @@ while 1:
                 calledevent = line[int(ce.checkarg(line, 4))]
                 if( calledevent in ce.events):
                     ce.eventhandler(calledevent)
-                elif(calledevent == "reconnect"):
-                    ce.restart("Okey!")
                 else:
                     ce.message("WTF?")
 

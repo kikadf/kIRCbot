@@ -163,13 +163,13 @@ def message(message, channel = CHANNEL):
     activation()
 
 
-def quit(channel = CHANNEL, msg = "Bye!"):
-    message(msg, channel)
+def quit():
+    message("Bye!")
     raise SystemExit
 
 
-def restart(word = "brb", channel = CHANNEL):
-    message(word, channel)
+def restart():
+    message("brb")
     s.send(bytes("QUIT\r\n", "UTF-8"))
     os.execv(sys.executable, ['python'] + sys.argv)
 
