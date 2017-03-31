@@ -23,31 +23,22 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import config as conf
 import commonevents as ce
 
 
 readbuffer = ""
 
 
-def connecting():
-    conf.checkconf(conf.config_path, conf.config_file)
-    conf.k_password("kIRCbot", conf.IDENT)
-    ce.conn2server(conf.HOST, conf.PORT, conf.NICK, conf.IDENT, conf.REALNAME, conf.PASSWORD)
-    ce.join2chan(conf.CHANNEL, conf.MASTER)
+ce.conns()
 
-
-connecting()
 
 while 1:
     readbuffer = readbuffer + ce.s.recv(1024).decode("UTF-8")
     temp = str.split(readbuffer, "\n")
     readbuffer = temp.pop( )
 
-    if ce.checkconnected(ce.lasttime) > 300:
-        print('Reconnect...')
-        ce.s.close()
-        connecting()
+    if ce.checkconnected() > 300:
+        ce.restart("brb")
 
     for line in temp:
         line = str.rstrip(line)
@@ -57,6 +48,7 @@ while 1:
             ce.pong(line[1])
 
         if(line[1] == "PRIVMSG"):
+            ce.activation()
 #            ce.defsender(line[0])
 
 #            size = len(line)
@@ -67,12 +59,14 @@ while 1:
 #                i = i + 1
 #            message.lstrip(":")
 #            ce.message(ce.sender, message)
-            if(line[3].strip(":") == conf.NICK):
+            if(line[3].strip(":") == ce.NICK):
                 calledevent = line[int(ce.checkarg(line, 4))]
                 if( calledevent in ce.events):
-                    ce.eventhandler(calledevent, conf.CHANNEL)
+                    ce.eventhandler(calledevent)
+                elif(calledevent == "reconnect"):
+                    ce.restart("Okey!")
                 else:
-                    ce.message(conf.CHANNEL, "WTF?")
+                    ce.message("WTF?")
 
         for index, i in enumerate(line):
             print(line[index])
