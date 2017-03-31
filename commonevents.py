@@ -146,7 +146,7 @@ def pong(line):
 
 
 def defsender(line):
-    global sender, lasttime
+    global sender
     sender = ""
 
     for char in line:
@@ -155,11 +155,12 @@ def defsender(line):
         if(char != ":"):
             sender += char
 
-    lasttime = time.time()
+    activation()
 
 
 def message(message, channel = CHANNEL):
     s.send(bytes("PRIVMSG %s :%s \r\n" % (channel, message), "UTF-8"))
+    activation()
 
 
 def quit(channel = CHANNEL, msg = "Bye!"):
