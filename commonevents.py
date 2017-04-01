@@ -126,7 +126,8 @@ def join2chan(channel = CHANNEL, nick = NICK):
 
 def conns():
     conn2server()
-    join2chan()
+    time.sleep(15) # Must give enough time, while logging, because of +i server mode.
+    join2chan()    # After logged, succesfull join. Invite exception: /mode #channel +I $a:ident
 
 
 def checkconnected(lsttime):
