@@ -23,49 +23,36 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import config as conf
-import connecting as conn
 import commonevents as ce
 
 
 readbuffer = ""
 
-def connecting():
-    conf.checkconf(conf.config_path, conf.config_file)
-    conf.k_password("kIRCbot", conf.IDENT)
-    conn.conn2server(conf.HOST, conf.PORT, conf.NICK, conf.IDENT, conf.REALNAME, conf.PASSWORD)
-    conn.join2chan(conf.CHANNEL, conf.MASTER)
-
-connecting()
+ce.conns()
 
 while 1:
-    readbuffer = readbuffer+conn.s.recv(1024).decode("UTF-8")
+    readbuffer = readbuffer + ce.s.recv(1024).decode("UTF-8")
     temp = str.split(readbuffer, "\n")
     readbuffer = temp.pop( )
 
-    if conn.checkconnected(ce.lasttime) > 300:
-        print('Reconnect...')
-        conn.s.close()
-        connecting()
+    if ce.checkconnected(ce.lasttime) > 500:
+        ce.restart()
 
     for line in temp:
+        print(line)
         line = str.rstrip(line)
         line = str.split(line)
 
         if(line[0] == "PING"):
-            ce._pong(line[1])
+            ce.pong(line[1])
 
         if(line[1] == "PRIVMSG"):
-            ce.defsender(line[0])
+            ce.activation()
+            if(line[3].strip(":") == ce.NICK):
+                ce.defsender(line[0])
+                calledevent = line[int(ce.checkarg(line, 4))]
+                if( calledevent in ce.events and ce.sender in ce.MASTER ):
+                    ce.eventhandler(calledevent)
+                else:
+                    ce.message("WTF?")
 
-            size = len(line)
-            i = 3
-            message = ""
-            while(i < size): 
-                message += line[i] + " "
-                i = i + 1
-            message.lstrip(":")
-            conn.s.send(bytes("PRIVMSG %s %s \r\n" % (ce.sender, message), "UTF-8"))
-
-        for index, i in enumerate(line):
-            print(line[index])
