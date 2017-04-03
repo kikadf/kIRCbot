@@ -35,8 +35,7 @@ sender = ""
 s = socket.socket()
 
 
-HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = ""
-REGISTERED = PASSWORD = 0
+HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = REGISTERED = PASSWORD = None
 
 
 def readconnconf(config):
@@ -73,24 +72,24 @@ def checkconf(path, config):
 
 
 def k_setpassword(service, username):
-    global PASSWORD
-
     print('Set password for %s.' % username)
-    PASSWORD = getpass.getpass(prompt='Password: ', stream=None)
-    keyring.set_password(service, username, PASSWORD)
+    password = getpass.getpass(prompt='Password: ', stream=None)
+    keyring.set_password(service, username, password)
+    return password
 
 
 def k_password(service, username):
-    global PASSWORD
-
     if REGISTERED == 1:
-        PASSWORD = keyring.get_password(service, username)
+        password = keyring.get_password(service, username)
 
-        if PASSWORD == None:
-            k_setpassword(service, username)
+        if password is None:
+            password = k_setpassword(service, username)
+
+        return password
 
     elif REGISTERED == 2:
-        k_setpassword(service, username)
+        password = k_setpassword(service, username)
+
         print("Edit config: %s" % config_file)
         shutil.copyfile(config_file, config_file + '.old')
         parser.read(config_file)
@@ -99,22 +98,19 @@ def k_password(service, username):
         parser.write(fileout)
         fileout.close()
 
-    else:
-        PASSWORD = 0
-
+        return password
 
 
 # To get values from config.ini
 checkconf(config_path, config_file)
-k_password("kIRCbot", IDENT)
 
 
-
-def conn2server(host = HOST, port = PORT, ident = IDENT, realname = REALNAME, password = PASSWORD):
+def conn2server(host = HOST, port = PORT, ident = IDENT, realname = REALNAME, registered = REGISTERED):
     s.connect((host, port))
     s.send(bytes("NICK %s\r\n" % ident, "UTF-8"))
     s.send(bytes("USER %s %s bla :%s\r\n" % (ident, host, realname), "UTF-8"))
-    if password != 0:
+    if registered is not None:
+        password = k_password("kIRCbot", ident)
         s.send(bytes("PRIVMSG NICKSERV :identify %s\r\n" % password, "UTF-8"))
 
 
