@@ -38,12 +38,12 @@ s = socket.socket()
 HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = REGISTERED = None
 
 
+# Functions for configuration
 def readconnconf(config):
     print("Used config: %s" % config)
     parser.read(config)
 
-    global HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER
-    global REGISTERED
+    global HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER, REGISTERED
 
     HOST = parser['Server and channel options']['Host']
     PORT = int(parser['Server and channel options']['Port'])
@@ -71,6 +71,11 @@ def checkconf(path, config):
             sys.exit("Must to edit %s" % config)
 
 
+# To get values from config.ini
+checkconf(config_path, config_file)
+
+
+# Functions for password handling
 def k_setpassword(service, username):
     print('Set password for %s.' % username)
     password = getpass.getpass(prompt='Password: ', stream=None)
@@ -101,10 +106,7 @@ def k_password(service, username):
         return password
 
 
-# To get values from config.ini
-checkconf(config_path, config_file)
-
-
+# Functions for connection
 def conn2server(host = HOST, port = PORT, ident = IDENT, realname = REALNAME, registered = REGISTERED):
     s.connect((host, port))
     s.send(bytes("NICK %s\r\n" % ident, "UTF-8"))
@@ -142,6 +144,7 @@ def pong(line):
     activation()
 
 
+# Functions to working
 def defsender(line):
     global sender
     sender = ""
@@ -160,6 +163,21 @@ def message(message, channel = CHANNEL):
     activation()
 
 
+def checkarg(list, index):
+    try:
+        t = list[index]
+    except IndexError:
+        return 3
+    else:
+        return '%s' % index
+
+
+def eventhandler(word):
+    event = events['%s' % word]
+    event()
+
+
+# Main event functions
 def quit():
     message("Bye!")
     raise SystemExit
@@ -171,28 +189,15 @@ def restart():
     os.execv(sys.executable, ['python'] + sys.argv)
 
 
-def checkarg(list, index):
-    try:
-        t = list[index]
-    except IndexError:
-        return 3
-    else:
-        return '%s' % index
-
-
 def test1():
-    print(">>> %s" % IDENT)
-    s.send(bytes("PRIVMSG NICKSERV INFO %s\r\n" % IDENT, "UTF-8"))
+    message("test1, yoo")
 
 
 def test2():
-    s.send(bytes("PRIVMSG NICKSERV INFO %s\r\n" % NICK, "UTF-8"))
+    message("test2 wazze")
 
 
-def eventhandler(word):
-    event = events['%s' % word]
-    event()
-
+# List of useable events
 events = {
             'test1' : test1,
             'test2' : test2,
