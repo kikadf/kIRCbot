@@ -35,7 +35,7 @@ sender = ""
 s = socket.socket()
 
 
-HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = REGISTERED = PASSWORD = None
+HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = REGISTERED = None
 
 
 def readconnconf(config):
