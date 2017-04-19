@@ -26,25 +26,26 @@ import configparser
 import keyring
 import getpass
 
+
 home = os.path.expanduser("~")
 config_path = '%s/.config/kircbot' % home
 config_file = '%s/config.ini' % config_path
+plugins_path = './plugins'
 parser = configparser.ConfigParser()
 lasttime = time.time()
 sender = ""
 s = socket.socket()
 
 
-HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = ""
-REGISTERED = PASSWORD = 0
+HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = REGISTERED = PLUGINS = None
 
 
+# Functions for configuration
 def readconnconf(config):
     print("Used config: %s" % config)
     parser.read(config)
 
-    global HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER
-    global REGISTERED
+    global HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER, REGISTERED, PLUGINS
 
     HOST = parser['Server and channel options']['Host']
     PORT = int(parser['Server and channel options']['Port'])
@@ -53,6 +54,7 @@ def readconnconf(config):
     IDENT = parser['ID options']['Ident']
     REALNAME = parser['ID options']['Realname']
     MASTER = parser['ID options']['Master'].split(',')
+    PLUGINS = parser['Main options']['Plugins'].split(',')
     try:
         REGISTERED = int(parser['ID options']['Registered'])
     except configparser.NoOptionError:
@@ -72,25 +74,30 @@ def checkconf(path, config):
             sys.exit("Must to edit %s" % config)
 
 
-def k_setpassword(service, username):
-    global PASSWORD
+# To get values from config.ini
+checkconf(config_path, config_file)
 
+
+# Functions for password handling
+def k_setpassword(service, username):
     print('Set password for %s.' % username)
-    PASSWORD = getpass.getpass(prompt='Password: ', stream=None)
-    keyring.set_password(service, username, PASSWORD)
+    password = getpass.getpass(prompt='Password: ', stream=None)
+    keyring.set_password(service, username, password)
+    return password
 
 
 def k_password(service, username):
-    global PASSWORD
-
     if REGISTERED == 1:
-        PASSWORD = keyring.get_password(service, username)
+        password = keyring.get_password(service, username)
 
-        if PASSWORD == None:
-            k_setpassword(service, username)
+        if password is None:
+            password = k_setpassword(service, username)
+
+        return password
 
     elif REGISTERED == 2:
-        k_setpassword(service, username)
+        password = k_setpassword(service, username)
+
         print("Edit config: %s" % config_file)
         shutil.copyfile(config_file, config_file + '.old')
         parser.read(config_file)
@@ -99,22 +106,16 @@ def k_password(service, username):
         parser.write(fileout)
         fileout.close()
 
-    else:
-        PASSWORD = 0
+        return password
 
 
-
-# To get values from config.ini
-checkconf(config_path, config_file)
-k_password("kIRCbot", IDENT)
-
-
-
-def conn2server(host = HOST, port = PORT, ident = IDENT, realname = REALNAME, password = PASSWORD):
+# Functions for connection
+def conn2server(host = HOST, port = PORT, ident = IDENT, realname = REALNAME, registered = REGISTERED):
     s.connect((host, port))
     s.send(bytes("NICK %s\r\n" % ident, "UTF-8"))
     s.send(bytes("USER %s %s bla :%s\r\n" % (ident, host, realname), "UTF-8"))
-    if password != 0:
+    if registered is not None:
+        password = k_password("kIRCbot", ident)
         s.send(bytes("PRIVMSG NICKSERV :identify %s\r\n" % password, "UTF-8"))
 
 
@@ -146,6 +147,7 @@ def pong(line):
     activation()
 
 
+# Functions to working
 def defsender(line):
     global sender
     sender = ""
@@ -164,6 +166,42 @@ def message(message, channel = CHANNEL):
     activation()
 
 
+def checkarg(list, index):
+    try:
+        t = list[index]
+    except IndexError:
+        return 3
+    else:
+        return '%s' % index
+
+
+def eventhandler(word):
+    event = events['%s' % word]
+    event()
+
+
+def pluginhandler(plugins = PLUGINS):
+    used_plugins = ""
+    for i in plugins:
+        if os.path.isfile('%s/%s.py' % (plugins_path, i)):
+            print("Use %s plugin." % i)
+            used_plugins += i
+        else:
+            print("Not found %s plugin." % i)
+    return used_plugins.split(',')
+
+
+def eventconvert(dict):
+    for key, value in dict.items():
+        dict[key] = "sample." + key
+    return dict
+
+
+def eventmerge(basedict, newdict):
+    basedict.update(newdict)
+
+
+# Main event functions
 def quit():
     message("Bye!")
     raise SystemExit
@@ -175,31 +213,22 @@ def restart():
     os.execv(sys.executable, ['python'] + sys.argv)
 
 
-def checkarg(list, index):
-    try:
-        t = list[index]
-    except IndexError:
-        return 3
-    else:
-        return '%s' % index
-
-
 def test1():
-    print(">>> %s" % IDENT)
-    s.send(bytes("PRIVMSG NICKSERV INFO %s\r\n" % IDENT, "UTF-8"))
+    message("test1, yoo")
 
 
 def test2():
-    s.send(bytes("PRIVMSG NICKSERV INFO %s\r\n" % NICK, "UTF-8"))
+    message("test2 wazze")
 
 
-def eventhandler(word):
-    event = events['%s' % word]
-    event()
-
+# List of useable events
 events = {
             'test1' : test1,
             'test2' : test2,
             'exit' : quit,
             'restart' : restart
          }
+
+
+from plugins import *
+
