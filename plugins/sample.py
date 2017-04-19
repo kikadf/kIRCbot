@@ -25,15 +25,17 @@ SAMPLE = None
 
 # Function to read the plugin's part in config file
 def sample_readconf(config):
-    print("Read config of Sample plugin")
+    print("Read config by Sample plugin")
     ce.parser.read(config)
 
     global SAMPLE
 
     try:
         SAMPLE = ce.parser['Sample options']['What']
+    except KeyError:
+        True
     except configparser.NoOptionError:
-        print("No options for Sample plugin")
+        print("Not found options for Sample plugin")
 
 
 # To get the plugin's configuration values
@@ -42,11 +44,14 @@ sample_readconf(ce.config_file)
 
 # The plugin's event functions
 def sample():
-    ce.message("Read your own, check plugins/sample.py.")
+    ce.message("Write your own, check plugins/sample.py.")
 
 
 # List of useable events
-events = {
-            'sample' : sample
-         }
+sample_events = {
+                    'sample' : sample
+                }
+
+
+ce.eventmerge(ce.events, sample_events)
 

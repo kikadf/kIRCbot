@@ -26,16 +26,18 @@ import configparser
 import keyring
 import getpass
 
+
 home = os.path.expanduser("~")
 config_path = '%s/.config/kircbot' % home
 config_file = '%s/config.ini' % config_path
+plugins_path = './plugins'
 parser = configparser.ConfigParser()
 lasttime = time.time()
 sender = ""
 s = socket.socket()
 
 
-HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = REGISTERED = None
+HOST = PORT = CHANNEL = NICK = IDENT = REALNAME = MASTER = REGISTERED = PLUGINS = None
 
 
 # Functions for configuration
@@ -43,7 +45,7 @@ def readconnconf(config):
     print("Used config: %s" % config)
     parser.read(config)
 
-    global HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER, REGISTERED
+    global HOST, PORT, CHANNEL, NICK, IDENT, REALNAME, MASTER, REGISTERED, PLUGINS
 
     HOST = parser['Server and channel options']['Host']
     PORT = int(parser['Server and channel options']['Port'])
@@ -52,6 +54,7 @@ def readconnconf(config):
     IDENT = parser['ID options']['Ident']
     REALNAME = parser['ID options']['Realname']
     MASTER = parser['ID options']['Master'].split(',')
+    PLUGINS = parser['Main options']['Plugins'].split(',')
     try:
         REGISTERED = int(parser['ID options']['Registered'])
     except configparser.NoOptionError:
@@ -177,6 +180,27 @@ def eventhandler(word):
     event()
 
 
+def pluginhandler(plugins = PLUGINS):
+    used_plugins = ""
+    for i in plugins:
+        if os.path.isfile('%s/%s.py' % (plugins_path, i)):
+            print("Use %s plugin." % i)
+            used_plugins += i
+        else:
+            print("Not found %s plugin." % i)
+    return used_plugins.split(',')
+
+
+def eventconvert(dict):
+    for key, value in dict.items():
+        dict[key] = "sample." + key
+    return dict
+
+
+def eventmerge(basedict, newdict):
+    basedict.update(newdict)
+
+
 # Main event functions
 def quit():
     message("Bye!")
@@ -204,3 +228,7 @@ events = {
             'exit' : quit,
             'restart' : restart
          }
+
+
+from plugins import *
+
