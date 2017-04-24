@@ -172,7 +172,7 @@ def checkarg(list, index):
     except IndexError:
         return 3
     else:
-        return '%s' % index
+        return int(index)
 
 
 def eventhandler(word):
