@@ -175,9 +175,9 @@ def checkarg(list, index):
         return int(index)
 
 
-def eventhandler(word):
+def eventhandler(word, args):
     event = events['%s' % word]
-    event()
+    event(args)
 
 
 def pluginhandler(plugins = PLUGINS):
@@ -202,22 +202,22 @@ def eventmerge(basedict, newdict):
 
 
 # Main event functions
-def quit():
+def quit(args):
     message("Bye!")
     raise SystemExit
 
 
-def restart():
+def restart(args):
     message("brb")
     s.send(bytes("QUIT\r\n", "UTF-8"))
     os.execv(sys.executable, ['python'] + sys.argv)
 
 
-def test1():
+def test1(args):
     message("test1, yoo")
 
 
-def test2():
+def test2(args):
     message("test2 wazze")
 
 

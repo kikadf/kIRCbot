@@ -53,7 +53,7 @@ while 1:
                 ce.defsender(line[0])
                 calledevent = line[ce.checkarg(line, 4)]
                 if( calledevent in ce.events and ce.sender in ce.MASTER ):
-                    ce.eventhandler(calledevent)
+                    ce.eventhandler(calledevent, line[5:])
                 else:
                     ce.message("WTF?")
 

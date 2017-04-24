@@ -43,7 +43,7 @@ sample_readconf(ce.config_file)
 
 
 # The plugin's event functions
-def sample():
+def sample(args):
     ce.message("Write your own, check plugins/sample.py.")
 
 
