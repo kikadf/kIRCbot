@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# plugins/sample.py, part of kIRCbot
+# plugins/ncore.py, part of kIRCbot
 # Copyright (C) 2017 : kikadf <kikadf.01@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -21,37 +21,39 @@ import configparser
 import commonevents as ce
 
 
-SAMPLE = None
+TARGET = USER = None
 
 # Function to read the plugin's part in config file
-def sample_readconf(config):
-    print("Read config by Sample plugin")
+def ncoremission_readconf(config):
+    print("Read config by nCore-Transmission plugin")
     ce.parser.read(config)
 
-    global SAMPLE
+    global TARGET, USER
 
     try:
-        SAMPLE = ce.parser['Sample options']['What']
+        TARGET = ce.parser['nCore-Transmission options']['Target']
+        USER = ce.parser['nCore-Transmission options']['User']
     except KeyError:
         True
     except configparser.NoOptionError:
-        print("Not found options for Sample plugin")
+        print("Not found options for nCore-Transmission plugin")
 
 
 # To get the plugin's configuration values
-sample_readconf(ce.config_file)
+ncoremission_readconf(ce.config_file)
 
 
 # The plugin's event functions
-def sample(args):
-    ce.message("Write your own, check plugins/sample.py.")
+def ncore(args):
+    ce.message("nCore")
 
 
 # List of useable events
-sample_events = {
-                    'sample' : sample
-                }
+ncoremission_events = {
+                        'sample' : ncore
+                      }
 
 
-ce.eventmerge(ce.events, sample_events)
+ce.eventmerge(ce.events, ncoremission_events)
+
 
