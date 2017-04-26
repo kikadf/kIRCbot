@@ -167,9 +167,9 @@ def checkarg(list, index):
     try:
         t = list[index]
     except IndexError:
-        return 3
+        return False
     else:
-        return int(index)
+        return True
 
 
 def eventhandler(word, args):

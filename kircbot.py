@@ -50,8 +50,10 @@ while 1:
         if(line[1] == "PRIVMSG"):
             ce.activation()
             if(line[3].strip(":") == ce.NICK):
-                calledevent = line[ce.checkarg(line, 4)]
+                calledevent = "42"
                 _who = ce.defsender(line[0])
+                if (ce.checkarg(line, 4) is True):
+                    calledevent = line[4]
                 if(calledevent in ce.events and _who in ce.MASTER):
                     ce.eventhandler(calledevent, line[5:])
                 else:
