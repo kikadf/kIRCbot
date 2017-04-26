@@ -33,7 +33,7 @@ config_file = '%s/config.ini' % config_path
 plugins_path = './plugins'
 parser = configparser.ConfigParser()
 lasttime = time.time()
-sender = ""
+#sender = ""
 s = socket.socket()
 
 
@@ -149,16 +149,13 @@ def pong(line):
 
 # Functions to working
 def defsender(line):
-    global sender
     sender = ""
-
     for char in line:
         if(char == "!"):
             break
         if(char != ":"):
             sender += char
-
-    activation()
+    return sender
 
 
 def message(message, channel = CHANNEL):
