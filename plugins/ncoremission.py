@@ -45,12 +45,47 @@ ncoremission_readconf(ce.config_file)
 
 # The plugin's event functions
 def ncore(args):
-    ce.message("nCore")
+    # ncore download [url] where
+    if (ce.checkarg(args, 0)):
+        args0 = args[0]
+    else:
+        ce.message("Something is missing...")
+        ce.message("Use: download or list commands")
+        return False
+
+    if (ce.checkarg(args, 1)):
+        args1 = args[1]
+    else:
+        if (args0 == "download"):
+            ce.message("Missing url...")
+            return False
+        elif (args0 == "list"):
+            ce.message("Missing list options")
+            return False
+
+    if (ce.checkarg(args, 2)):
+        args2 = args[2]
+    else:
+        args2 = None
+
+    if (args0 == "download"):
+        if (args2 != None):
+            ce.message("fine with specified save dir")
+        else:
+            ce.message("fine with default save dir")
+    elif (args0 == "list"):
+        if (args1 == "full"):
+            ce.message("full list")
+        else:
+            ce.message("Missing options (full)")
+    else:
+        ce.message("Wrong command (download or list)")
+
 
 
 # List of useable events
 ncoremission_events = {
-                        'sample' : ncore
+                        'ncore' : ncore
                       }
 
 
