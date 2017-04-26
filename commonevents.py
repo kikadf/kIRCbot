@@ -211,6 +211,10 @@ def restart(args):
     os.execv(sys.executable, ['python'] + sys.argv)
 
 
+def _events(args):
+    message(list(events.keys()))
+
+
 def test1(args):
     message("test1, yoo")
 
@@ -224,7 +228,8 @@ events = {
             'test1' : test1,
             'test2' : test2,
             'exit' : quit,
-            'restart' : restart
+            'restart' : restart,
+            'events' : _events
          }
 
 
