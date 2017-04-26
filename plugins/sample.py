@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# sample.py, part of kIRCbot
+# plugins/sample.py, part of kIRCbot
 # Copyright (C) 2017 : kikadf <kikadf.01@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ sample_readconf(ce.config_file)
 
 
 # The plugin's event functions
-def sample():
+def sample(args):
     ce.message("Write your own, check plugins/sample.py.")
 
 

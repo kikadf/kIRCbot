@@ -33,7 +33,7 @@ config_file = '%s/config.ini' % config_path
 plugins_path = './plugins'
 parser = configparser.ConfigParser()
 lasttime = time.time()
-sender = ""
+#sender = ""
 s = socket.socket()
 
 
@@ -127,7 +127,7 @@ def join2chan(channel = CHANNEL, nick = NICK):
 
 def conns():
     conn2server()
-    time.sleep(15) # Must give enough time, while logging, because of +i server mode.
+    time.sleep(20) # Must give enough time, while logging, because of +i server mode.
     join2chan()    # After logged, succesfull join. Invite exception: /mode #channel +I $a:ident
 
 
@@ -149,16 +149,13 @@ def pong(line):
 
 # Functions to working
 def defsender(line):
-    global sender
     sender = ""
-
     for char in line:
         if(char == "!"):
             break
         if(char != ":"):
             sender += char
-
-    activation()
+    return sender
 
 
 def message(message, channel = CHANNEL):
@@ -170,25 +167,25 @@ def checkarg(list, index):
     try:
         t = list[index]
     except IndexError:
-        return 3
+        return False
     else:
-        return '%s' % index
+        return True
 
 
-def eventhandler(word):
+def eventhandler(word, args):
     event = events['%s' % word]
-    event()
+    event(args)
 
 
 def pluginhandler(plugins = PLUGINS):
-    used_plugins = ""
+    used_plugins = []
     for i in plugins:
         if os.path.isfile('%s/%s.py' % (plugins_path, i)):
             print("Use %s plugin." % i)
-            used_plugins += i
+            used_plugins.append('%s' % i)
         else:
             print("Not found %s plugin." % i)
-    return used_plugins.split(',')
+    return used_plugins
 
 
 def eventconvert(dict):
@@ -202,22 +199,27 @@ def eventmerge(basedict, newdict):
 
 
 # Main event functions
-def quit():
+def quit(args):
     message("Bye!")
+    s.send(bytes("QUIT\r\n", "UTF-8"))
     raise SystemExit
 
 
-def restart():
+def restart(args):
     message("brb")
     s.send(bytes("QUIT\r\n", "UTF-8"))
     os.execv(sys.executable, ['python'] + sys.argv)
 
 
-def test1():
+def _events(args):
+    message(list(events.keys()))
+
+
+def test1(args):
     message("test1, yoo")
 
 
-def test2():
+def test2(args):
     message("test2 wazze")
 
 
@@ -226,7 +228,8 @@ events = {
             'test1' : test1,
             'test2' : test2,
             'exit' : quit,
-            'restart' : restart
+            'restart' : restart,
+            'events' : _events
          }
 
 
