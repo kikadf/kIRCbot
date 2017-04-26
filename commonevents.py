@@ -201,6 +201,7 @@ def eventmerge(basedict, newdict):
 # Main event functions
 def quit(args):
     message("Bye!")
+    s.send(bytes("QUIT\r\n", "UTF-8"))
     raise SystemExit
 
 
