@@ -178,14 +178,14 @@ def eventhandler(word, args):
 
 
 def pluginhandler(plugins = PLUGINS):
-    used_plugins = ""
+    used_plugins = []
     for i in plugins:
         if os.path.isfile('%s/%s.py' % (plugins_path, i)):
             print("Use %s plugin." % i)
-            used_plugins += i
+            used_plugins.append('%s' % i)
         else:
             print("Not found %s plugin." % i)
-    return used_plugins.split(',')
+    return used_plugins
 
 
 def eventconvert(dict):
